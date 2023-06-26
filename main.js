@@ -82,3 +82,9 @@ function changeDisplay(num) {
     }
 }
 
+const ac = document.querySelector("#ac-btn");
+ac.addEventListener("click", clearDisplay)
+
+function clearDisplay() {
+    disp.textContent = "0";
+}
