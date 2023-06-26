@@ -17,12 +17,11 @@
 // if op -> num, calculate upon next op or = button
 // when two nums and one op, call operate()
 // maybe use global arr to keep track, not sure how bugproof it is tho
-// try catch error in listener also
 
-// edge cases
 // calling operate() for % where there's no num2
 // irrational decimals
 // div by 0
+// could implement c state for ac button
 
 function add(num1, num2) {
     return num1 + num2;
@@ -69,3 +68,17 @@ function operate(num1, op, num2) {
         return "Error"
     }
 }
+
+const disp = document.querySelector(".display");
+const numBtns = document.querySelectorAll(".num-btn");
+numBtns.forEach(numBtn => numBtn.addEventListener("click", () => changeDisplay(numBtn.textContent)));
+
+function changeDisplay(num) {
+    if (disp.textContent == 0) {
+        disp.textContent = num;
+    }
+    else {
+        disp.textContent = disp.textContent + num + "";
+    }
+}
+
