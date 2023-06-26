@@ -82,9 +82,23 @@ function changeDisplay(num) {
     }
 }
 
+const negBtn = document.querySelector("#neg-btn");
+negBtn.addEventListener("click", negateDisplay);
+
+function negateDisplay() {
+    if (disp.textContent[0] != "-") {
+        disp.textContent = "-" + disp.textContent;
+    }
+    else {
+        disp.textContent = disp.textContent.slice(1);
+    }
+}
+
+
 const ac = document.querySelector("#ac-btn");
-ac.addEventListener("click", clearDisplay)
+ac.addEventListener("click", clearDisplay);
 
 function clearDisplay() {
     disp.textContent = "0";
 }
+
