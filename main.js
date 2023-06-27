@@ -81,7 +81,7 @@ function operate(num1, op, num2) {
 // update disp
 function updateDisplay(val) {
     disp.textContent = val;
-    dispVal = val;
+    dispVal = parseInt(val);
 }
 
 // TODO: handle after error, all ops with num1 as error eval to error
@@ -157,7 +157,7 @@ function handleOp(opBtn) {  // num1 is never null, 0 when reset
     else if (expression.num2 == null && expression.op != null && dispVal != null) {
         expression.num2 = dispVal;
         console.log(expression)
-        evaluateExpression(parseInt(expression.num1), expression.op, parseInt(expression.num2));
+        evaluateExpression(expression.num1, expression.op, expression.num2);
         expression.op = opBtn.textContent;
         dispVal = null;
 
@@ -170,7 +170,7 @@ function handleEq() {
     if (expression.num2 == null && expression.op != null && dispVal != null) {
         expression.num2 = dispVal;
         console.log(expression)
-        evaluateExpression(parseInt(expression.num1), expression.op, parseInt(expression.num2));
+        evaluateExpression(expression.num1, expression.op, expression.num2);
     }
     // case 2: num1 -> op -> eq, use num1 as num2
     // else if (opBtn == eqBtn && expression.op != null && dispVal == null) {
