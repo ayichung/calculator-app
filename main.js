@@ -159,6 +159,10 @@ function handleOp(opBtn) {  // num1 is never null, 0 when reset
         expr.op = opBtn.textContent;
         dispVal = null;
     }
+    // case 3: op -> op, switch op
+    else {
+        expr.op = opBtn.textContent;
+    }
 }
 
 function handleEq() {
