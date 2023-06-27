@@ -1,28 +1,32 @@
-// features
-// +, -, *, / two nums
-// one op is <num op num>
-
+// ios calulator clone
 // buttons for digits, ops, equals, clear
 // num display as user presses buttons, only 1 num in disp
 // lock highlight on ops buttons when they're pressed but not yet evaled
 
 // bhvr ref https://mrbuddh4.github.io/calculator/
-// bhvr should be like iphone calc, eval nums in pairs as the user strings more
-// ex 1 + 3 - 2 = should turn into 4 - 2 and then 2
 
 // for each button, check prev button value
 // if num -> num OR num first, replace default 0 and append until max length
 // if num -> op OR op first, save cur display as num1 (default 0), save op as op, ready for num2
-// if op -> op, use num1 as num2
+// if op -> op OR op -> =, use num1 as num2
 // if op -> num, calculate upon next op or = button
-// when two nums and one op, call operate()
-// maybe use global arr to keep track, not sure how bugproof it is tho
+// if = => = (repeat prev op with cur as num1 and prev num2)
+// if num -> =, replace prev num2 with cur and evaluate with prev num1 and prev op (or do nothing)
 
-// calling operate() for % where there's no num2
-// irrational decimals
-// div by 0
+// calling operate() for % without num2 arg
+// irrational decimals and long nums
+// div by 0 (what happens if you try continuing calculation after)
 // could implement c state for ac button
 
+// globals
+let dispVal = 0;
+let expression = {
+    num1: 0,
+    op: null,
+    num2: null,
+};
+
+// basic funcs
 function add(num1, num2) {
     return num1 + num2;
 }
@@ -69,36 +73,85 @@ function operate(num1, op, num2) {
     }
 }
 
+// update disp
+function updateDisplay(val) {
+    disp.textContent = val;
+    dispVal = val;
+}
+
+// num btns
 const disp = document.querySelector(".display");
 const numBtns = document.querySelectorAll(".num-btn");
-numBtns.forEach(numBtn => numBtn.addEventListener("click", () => changeDisplay(numBtn.textContent)));
+numBtns.forEach(numBtn => numBtn.addEventListener("click", () => numDisplay(numBtn.textContent)));
 
-function changeDisplay(num) {
-    if (disp.textContent == 0) {
-        disp.textContent = num;
+function numDisplay(num) {
+    if (disp.textContent == 0 || (dispVal == null)) {
+        updateDisplay(num);
     }
     else {
-        disp.textContent = disp.textContent + num + "";
+        updateDisplay(disp.textContent + num + "");
     }
 }
 
+// +/- btn
 const negBtn = document.querySelector("#neg-btn");
 negBtn.addEventListener("click", negateDisplay);
 
 function negateDisplay() {
     if (disp.textContent[0] != "-") {
-        disp.textContent = "-" + disp.textContent;
+        updateDisplay("-" + disp.textContent);
     }
     else {
-        disp.textContent = disp.textContent.slice(1);
+        updateDisplay(disp.textContent.slice(1));
     }
 }
 
-
+// ac btn
 const ac = document.querySelector("#ac-btn");
 ac.addEventListener("click", clearDisplay);
 
 function clearDisplay() {
-    disp.textContent = "0";
+    updateDisplay(0);
+    clearExpression();
 }
 
+function clearExpression() {
+    expression.num1 = dispVal;
+    expression.op = null;
+    expression.num2 = null;
+}
+
+// op btns
+const opBtns = document.querySelectorAll(".op-btn");
+opBtns.forEach(opBtn => opBtn.addEventListener("click", () => storeExpression(opBtn)))
+//TODO: handle % separately (not considered an opBtn)
+
+const eqBtn = document.querySelector("#eq-btn");
+eqBtn.addEventListener("click", () => evaluateExpression(expression.num1, expression.op, expression.num2))
+
+function storeExpression(opBtn) {  // num1 is never null, 0 when reset
+    console.log(expression);
+    // TODO: highlight opBtn
+    // case 1: num1 -> op -> num2, wait for num2
+    if (expression.num2 == null && expression.op == null) {
+        expression.num1 = dispVal;
+        expression.op = opBtn.textContent;
+        dispVal = null;
+    }
+    // case 2: num2 -> op -> num3, eval prev exp and wait for num2
+    else if (expression.num2 == null && expression.op != null && dispVal != null) {
+        expression.num2 = dispVal;
+        console.log(expression)
+        evaluateExpression(parseInt(expression.num1), expression.op, parseInt(expression.num2));
+        expression.op = opBtn.textContent;
+        dispVal = null;
+    }
+    console.log(expression);
+}
+
+function evaluateExpression(num1, op, num2) {
+    console.log(expression);
+    const result = operate(num1, op, num2)
+    updateDisplay(result);
+    clearExpression();
+}
