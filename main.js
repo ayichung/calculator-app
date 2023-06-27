@@ -25,6 +25,11 @@ let expression = {
     op: null,
     num2: null,
 };
+let prevExpression = {
+    num1: 0,
+    op: null,
+    num2: null,
+};
 
 // basic funcs
 function add(num1, num2) {
@@ -79,6 +84,12 @@ function updateDisplay(val) {
     dispVal = val;
 }
 
+// TODO: handle after error, all ops with num1 as error eval to error
+// break out of error w ac or any num button or . button
+// disable +/- button
+
+// TODO: handle . button
+
 // num btns
 const disp = document.querySelector(".display");
 const numBtns = document.querySelectorAll(".num-btn");
@@ -116,37 +127,57 @@ function clearDisplay() {
 }
 
 function clearExpression() {
+    prevExpression = expression;
+    console.log(prevExpression);
     expression.num1 = dispVal;
     expression.op = null;
     expression.num2 = null;
+    console.log(expression);
+    console.log(prevExpression);
 }
 
 // op btns
 const opBtns = document.querySelectorAll(".op-btn");
-opBtns.forEach(opBtn => opBtn.addEventListener("click", () => storeExpression(opBtn)))
+opBtns.forEach(opBtn => opBtn.addEventListener("click", () => handleOp(opBtn)))
 //TODO: handle % separately (not considered an opBtn)
 
 const eqBtn = document.querySelector("#eq-btn");
-eqBtn.addEventListener("click", () => evaluateExpression(expression.num1, expression.op, expression.num2))
+eqBtn.addEventListener("click", handleEq);
 
-function storeExpression(opBtn) {  // num1 is never null, 0 when reset
+function handleOp(opBtn) {  // num1 is never null, 0 when reset
     console.log(expression);
     // TODO: highlight opBtn
-    // case 1: num1 -> op -> num2, wait for num2
+    // case 1: num1 -> op, wait for num2
     if (expression.num2 == null && expression.op == null) {
         expression.num1 = dispVal;
         expression.op = opBtn.textContent;
         dispVal = null;
     }
-    // case 2: num2 -> op -> num3, eval prev exp and wait for num2
+    // case 2: num2 -> op, eval and wait for num2
     else if (expression.num2 == null && expression.op != null && dispVal != null) {
         expression.num2 = dispVal;
         console.log(expression)
         evaluateExpression(parseInt(expression.num1), expression.op, parseInt(expression.num2));
         expression.op = opBtn.textContent;
         dispVal = null;
+
     }
     console.log(expression);
+}
+
+function handleEq() {
+    // case 1: num2 -> eq, eval and wait for op
+    if (expression.num2 == null && expression.op != null && dispVal != null) {
+        expression.num2 = dispVal;
+        console.log(expression)
+        evaluateExpression(parseInt(expression.num1), expression.op, parseInt(expression.num2));
+    }
+    // case 2: num1 -> op -> eq, use num1 as num2
+    // else if (opBtn == eqBtn && expression.op != null && dispVal == null) {
+        
+    // }
+    // case 3: num2 -> eq -> eq, use prev op and num2 w cur num1
+
 }
 
 function evaluateExpression(num1, op, num2) {
