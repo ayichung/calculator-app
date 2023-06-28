@@ -35,7 +35,7 @@ function mult(num1, num2) {
 
 function div(num1, num2) {
     if (num2 == 0) {
-        throw new Error("Error");
+        throw new Error();
     }
     return num1 / num2;
 }
@@ -63,21 +63,27 @@ function operate(num1, op, num2) {
         }
     }
     catch (e) {
-        return "Error"
+        return "Error";
     }
 }
 
 // update disp
 function updateDisplay(val) {
-    val = val + ""
-    if (val.length > 9) {
-        val = val.slice(0, 10)
+    if (val == "Error") {
+        clearDisplay();
+        disp.textContent = val;
     }
-    if (val.length > 1 && val[val.length-1] == "0") {
-        val = parseFloat(val);
+    else {
+        val = val + ""
+        if (val.length > 9) {
+            val = val.slice(0, 10)
+        }
+        if (val.length > 1 && val[val.length-1] == "0") {
+            val = parseFloat(val);
+        }
+        disp.textContent = val;
+        dispVal = parseFloat(val);
     }
-    disp.textContent = val;
-    dispVal = parseFloat(val);
 }
 
 // num btns
@@ -201,9 +207,3 @@ function handleDec() {
         }
     }
 }
-
-// post-error state
-// TODO: handle after error, all ops with num1 as error eval to error
-// break out of error w ac or any num button or . button
-// disable +/- button
-// prevEq = false;
