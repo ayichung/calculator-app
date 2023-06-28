@@ -1,11 +1,3 @@
-// bhvr ref https://mrbuddh4.github.io/calculator/
-
-// unhandled
-// calling operate() for % without num2 arg
-// irrational decimals and long nums
-// other todo
-// ignoring c state for ac button, not worth
-
 // globals
 let dispVal = 0;
 let expr = {
@@ -119,6 +111,7 @@ const ac = document.querySelector("#ac-btn");
 ac.addEventListener("click", clearDisplay);
 
 function clearDisplay() {
+    // TODO: unlock op btn highlight
     updateDisplay(0);
     clearExpression();
     prevExpr = expr;
@@ -136,7 +129,7 @@ const opBtns = document.querySelectorAll(".op-btn");
 opBtns.forEach(opBtn => opBtn.addEventListener("click", () => handleOp(opBtn)))
 
 function handleOp(opBtn) {  // num1 is never null, 0 when reset
-    // TODO: highlight lock opBtn
+    // TODO: lock op btn highlight
     // case 1: num1 -> op, wait for num2
     if (expr.num2 == null && expr.op == null) {
         expr.num1 = dispVal;
@@ -157,8 +150,15 @@ function handleOp(opBtn) {  // num1 is never null, 0 when reset
 }
 
 // % btn
-//TODO: handle % (not considered an opBtn)
-// prevEq = true;
+const perBtn = document.querySelector("#per-btn");
+perBtn.addEventListener("click", handlePer);
+
+function handlePer() {
+    if (disp.textContent != "Error") {
+        updateDisplay(dispVal / 100);
+        prevEq = true;
+    }
+}
 
 // eq btn
 const eqBtn = document.querySelector("#eq-btn");
@@ -186,6 +186,7 @@ function handleEq() {
 }
 
 function evaluateExpression(num1, op, num2) {
+    // TODO: unlock op btn highlight
     const result = operate(num1, op, num2)
     updateDisplay(result);
     clearExpression();
