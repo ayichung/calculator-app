@@ -84,6 +84,7 @@ const numBtns = document.querySelectorAll(".num-btn");
 numBtns.forEach(numBtn => numBtn.addEventListener("click", () => numDisplay(numBtn.textContent)));
 
 function numDisplay(num) {
+    opBtns.forEach(opBtn => opBtn.classList.remove("hl-lock"));
     if (disp.textContent == "0" || dispVal == null || prevEq) {
         updateDisplay(num);
         prevEq = false;
@@ -111,7 +112,7 @@ const ac = document.querySelector("#ac-btn");
 ac.addEventListener("click", clearDisplay);
 
 function clearDisplay() {
-    // TODO: unlock op btn highlight
+    opBtns.forEach(opBtn => opBtn.classList.remove("hl-lock"));
     updateDisplay(0);
     clearExpression();
     prevExpr = expr;
@@ -129,7 +130,8 @@ const opBtns = document.querySelectorAll(".op-btn");
 opBtns.forEach(opBtn => opBtn.addEventListener("click", () => handleOp(opBtn)))
 
 function handleOp(opBtn) {  // num1 is never null, 0 when reset
-    // TODO: lock op btn highlight
+    opBtns.forEach(opBtn => opBtn.classList.remove("hl-lock"));
+    opBtn.classList.add("hl-lock");
     // case 1: num1 -> op, wait for num2
     if (expr.num2 == null && expr.op == null) {
         expr.num1 = dispVal;
@@ -186,7 +188,7 @@ function handleEq() {
 }
 
 function evaluateExpression(num1, op, num2) {
-    // TODO: unlock op btn highlight
+    opBtns.forEach(opBtn => opBtn.classList.remove("hl-lock"));
     const result = operate(num1, op, num2)
     updateDisplay(result);
     clearExpression();

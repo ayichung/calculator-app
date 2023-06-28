@@ -1,0 +1,11 @@
+button {
+    border: 0px;   
+}
+
+button:active {
+    background-color: grey;
+}
+
+.hl-lock {
+    background-color: grey;
+}
