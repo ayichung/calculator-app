@@ -1,22 +1,10 @@
-// ios calulator clone
-// buttons for digits, ops, equals, clear
-// num display as user presses buttons, only 1 num in disp
-// lock highlight on ops buttons when they're pressed but not yet evaled
-
 // bhvr ref https://mrbuddh4.github.io/calculator/
 
-// for each button, check prev button value
-// if num -> num OR num first, replace default 0 and append until max length
-// if num -> op OR op first, save cur display as num1 (default 0), save op as op, ready for num2
-// if op -> op OR op -> =, use num1 as num2
-// if op -> num, calculate upon next op or = button
-// if = => = (repeat prev op with cur as num1 and prev num2)
-// if num -> =, replace prev num2 with cur and evaluate with prev num1 and prev op (or do nothing)
-
+// unhandled
 // calling operate() for % without num2 arg
 // irrational decimals and long nums
-// div by 0 (what happens if you try continuing calculation after)
-// could implement c state for ac button
+// other todo
+// ignoring c state for ac button, not worth
 
 // globals
 let dispVal = 0;
@@ -81,23 +69,24 @@ function operate(num1, op, num2) {
 
 // update disp
 function updateDisplay(val) {
+    val = val + ""
+    if (val.length > 9) {
+        val = val.slice(0, 10)
+    }
+    if (val.length > 1 && val[val.length-1] == "0") {
+        val = parseFloat(val);
+    }
     disp.textContent = val;
-    dispVal = parseInt(val);
+    dispVal = parseFloat(val);
 }
 
-// TODO: handle after error, all ops with num1 as error eval to error
-// break out of error w ac or any num button or . button
-// disable +/- button
-
-// TODO: handle . button
-
 // num btns
-const disp = document.querySelector(".display");
+const disp = document.querySelector("#display");
 const numBtns = document.querySelectorAll(".num-btn");
 numBtns.forEach(numBtn => numBtn.addEventListener("click", () => numDisplay(numBtn.textContent)));
 
 function numDisplay(num) {
-    if (disp.textContent == 0 || dispVal == null || prevEq) {
+    if (disp.textContent == "0" || dispVal == null || prevEq) {
         updateDisplay(num);
         prevEq = false;
     }
@@ -139,13 +128,9 @@ function clearExpression() {
 // op btns
 const opBtns = document.querySelectorAll(".op-btn");
 opBtns.forEach(opBtn => opBtn.addEventListener("click", () => handleOp(opBtn)))
-//TODO: handle % separately (not considered an opBtn)
-
-const eqBtn = document.querySelector("#eq-btn");
-eqBtn.addEventListener("click", handleEq);
 
 function handleOp(opBtn) {  // num1 is never null, 0 when reset
-    // TODO: highlight opBtn
+    // TODO: highlight lock opBtn
     // case 1: num1 -> op, wait for num2
     if (expr.num2 == null && expr.op == null) {
         expr.num1 = dispVal;
@@ -165,8 +150,16 @@ function handleOp(opBtn) {  // num1 is never null, 0 when reset
     }
 }
 
+// % btn
+//TODO: handle % (not considered an opBtn)
+// prevEq = true;
+
+// eq btn
+const eqBtn = document.querySelector("#eq-btn");
+eqBtn.addEventListener("click", handleEq);
+
 function handleEq() {
-    // case 1: num2 -> eq, eval and wait for op
+    // case 1: num2 -> eq, eval and wait for next op
     if (expr.num2 == null && expr.op != null && dispVal != null) {
         expr.num2 = dispVal;
         evaluateExpression(expr.num1, expr.op, expr.num2);
@@ -191,3 +184,26 @@ function evaluateExpression(num1, op, num2) {
     updateDisplay(result);
     clearExpression();
 }
+
+// . btn
+const decBtn = document.querySelector("#dec-btn");
+decBtn.addEventListener("click", handleDec);
+
+function handleDec() {
+    dispStr = dispVal + "";
+    if (!dispStr.includes(".")) {
+        if (dispStr == "null" || dispStr == "Error" || prevEq) {
+            updateDisplay("0.");
+            prevEq = false;
+        }
+        else {
+            updateDisplay(dispVal + ".");
+        }
+    }
+}
+
+// post-error state
+// TODO: handle after error, all ops with num1 as error eval to error
+// break out of error w ac or any num button or . button
+// disable +/- button
+// prevEq = false;
